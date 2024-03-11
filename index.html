@@ -1,44 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recipe Search Page</title>
-    <link rel="stylesheet" href="main.css">
-</head>
+    <link rel="stylesheet" href="main.css" />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script>
+      function dataSetup() {
+        return {
+          recipes: null,
+          search: "",
+          difficulty: "",
+          totalTime: "",
+          async searchRecipes() {
+            const response = await fetch("https://dummyjson.com/recipes");
+            const data = await response.json();
+            if (data) {
+              this.recipes = data.recipes;
+            }
+            console.log(this.recipes.recipes);
+          },
+        };
+      }
+    </script>
+  </head>
 
-<body>
+  <body>
     <header>
-        <h1>Recipe Search Page</h1>
+      <h1>Recipe Search Page</h1>
     </header>
 
-    <main>
-        <div class="search-bar">
-            <!-- Add your search bar code here -->
-            <form id="searchForm">
-                <input type="text" name="search" placeholder="Search for Recipe Name...">
-                <select name="difficulty">
-                    <option>Difficulty</option>
-                    <option>Easy</option>
-                    <option>Medium</option>
-                </select>
-                <select name="total-time">
-                    <option>Total Time to Make</option>
-                    <option>15 minutes or less</option>
-                    <option>15-30 minutes</option>
-                    <option>30 minutes or more</option>
-                </select>
-                <button type="submit">Search</button>
-            </form>
-        </div>
+    <main x-data="dataSetup()" x-init="searchRecipes()">
+      <div class="search-bar">
+        <!-- Add your search bar code here -->
+        <form id="searchForm">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search for Recipe Name..."
+          />
+          <select name="difficulty">
+            <option>Difficulty</option>
+            <option>Easy</option>
+            <option>Medium</option>
+          </select>
+          <select name="total-time">
+            <option>Total Time to Make</option>
+            <option>15 minutes or less</option>
+            <option>15-30 minutes</option>
+            <option>30 minutes or more</option>
+          </select>
+          <button type="submit">Search</button>
+        </form>
+      </div>
 
-        <div class="results">
-            <!-- Add your search results code here -->
-        </div>
+      <div class="results">
+        <template x-for="(recipe, index) in recipes.slice(0,8)" :key="index">
+          <div class="recipe-wrapper">
+            <img :src="recipe.image" :alt="recipe.name" />
+          </div>
+        </template>
+      </div>
     </main>
 
     <script src="index.js"></script>
-</body>
-
+  </body>
 </html>
