@@ -10,6 +10,65 @@
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
     <script>
+      function filterSearch(searchable, searchTerm) {
+        /* Filter out search terms */
+
+        // Filter if we have a search term
+        if (searchTerm != "" && searchTerm != "Search for Recipe Name...") {
+          return searchable.filter((item) => {
+            // console.log(item.name);
+            return item.name.toLowerCase().includes(searchTerm);
+          });
+        }
+        // Return all
+        return searchable;
+      }
+
+      function filterDifficulty(searchable, difficulty) {
+        /* Filter out Difficulties */
+        // Filter if we have a difficulty set
+        // console.log(item.name);
+        console.log(difficulty);
+        if (difficulty != "" && difficulty.toLowerCase() != "difficulty") {
+          return searchable.filter((item) => {
+            return item.difficulty
+              .toLowerCase()
+              .includes(difficulty.toLowerCase());
+          });
+        }
+        // Return all
+        return searchable;
+      }
+      function filterTime(searchable, totalTime) {
+        /* Filter out total time */
+        if (totalTime == "15 minutes or less") {
+          return searchable.filter((item) => {
+            return (
+              parseInt(item.cookTimeMinutes) + parseInt(item.prepTimeMinutes) <=
+              15
+            );
+          });
+        } else if (totalTime == "15-30 minutes") {
+          return searchable.filter((item) => {
+            console.log(item.cookTimeMinutes + item.prepTimeMinutes);
+            return (
+              15 <=
+                parseInt(item.cookTimeMinutes) +
+                  parseInt(item.prepTimeMinutes) &&
+              parseInt(item.cookTimeMinutes) + parseInt(item.prepTimeMinutes) <=
+                30
+            );
+          });
+        } else {
+          return searchable.filter((item) => {
+            return (
+              parseInt(item.cookTimeMinutes) + parseInt(item.prepTimeMinutes) >
+              30
+            );
+          });
+        }
+      }
+
       function dataSetup() {
         return {
           recipes: null,
@@ -19,8 +78,16 @@
           async searchRecipes() {
             const response = await fetch("https://dummyjson.com/recipes");
             const data = await response.json();
+            var filteredResults = null;
             if (data) {
-              this.recipes = data.recipes;
+              filteredResults = filterSearch(data.recipes, this.search);
+              console.log(filteredResults);
+              filteredResults = filterDifficulty(
+                filteredResults,
+                this.difficulty
+              );
+              filteredResults = filterTime(filteredResults, this.totalTime);
+              this.recipes = filteredResults;
             }
             console.log(this.recipes.recipes);
           },
@@ -42,19 +109,25 @@
             type="text"
             name="search"
             placeholder="Search for Recipe Name..."
+            x-model="search"
+            @change="console.log(search)"
           />
-          <select name="difficulty">
+          <select
+            name="difficulty"
+            x-model="difficulty"
+            @change="console.log(difficulty)"
+          >
             <option>Difficulty</option>
             <option>Easy</option>
             <option>Medium</option>
           </select>
-          <select name="total-time">
+          <select name="total-time" x-model="totalTime">
             <option>Total Time to Make</option>
             <option>15 minutes or less</option>
             <option>15-30 minutes</option>
             <option>30 minutes or more</option>
           </select>
-          <button type="submit">Search</button>
+          <button type="submit" @click="searchRecipes()">Search</button>
         </form>
       </div>
 
@@ -62,6 +135,10 @@
         <template x-for="(recipe, index) in recipes.slice(0,8)" :key="index">
           <div class="recipe-wrapper">
             <img :src="recipe.image" :alt="recipe.name" />
+            <h3 x-text="recipe.name"></h3>
+            <p class="difficulty" x-text="recipe.difficulty"></p>
+            <p class="prepTime" x-text="recipe.prepTimeMinutes + ' min'"></p>
+            <p class="cookTime" x-text="recipe.cookTimeMinutes + ' min'"></p>
           </div>
         </template>
       </div>

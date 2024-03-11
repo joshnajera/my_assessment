@@ -36,10 +36,10 @@ main {
   flex-basis: 33%;
   box-sizing: border-box;
 }
-.results > .recipe-wrapper:first-of-type {
+.results .recipe-wrapper:first-of-type {
   flex-basis: 66%;
 }
-.results > .recipe-wrapper:first-of-type img {
+.results .recipe-wrapper:first-of-type img {
   object-fit: cover;
   aspect-ratio: 2;
 }
