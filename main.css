@@ -27,6 +27,7 @@ main {
 .results {
   width: 100%;
   display: flex;
+
   flex-wrap: wrap;
 }
 .results img {

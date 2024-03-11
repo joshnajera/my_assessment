@@ -16,7 +16,6 @@
         // Filter if we have a search term
         if (searchTerm != "" && searchTerm != "Search for Recipe Name...") {
           return searchable.filter((item) => {
-            // console.log(item.name);
             return item.name.toLowerCase().includes(searchTerm);
           });
         }
@@ -27,8 +26,6 @@
       function filterDifficulty(searchable, difficulty) {
         /* Filter out Difficulties */
         // Filter if we have a difficulty set
-        // console.log(item.name);
-        console.log(difficulty);
         if (difficulty != "" && difficulty.toLowerCase() != "difficulty") {
           return searchable.filter((item) => {
             return item.difficulty
@@ -50,7 +47,6 @@
           });
         } else if (totalTime == "15-30 minutes") {
           return searchable.filter((item) => {
-            console.log(item.cookTimeMinutes + item.prepTimeMinutes);
             return (
               15 <=
                 parseInt(item.cookTimeMinutes) +
@@ -81,7 +77,6 @@
             var filteredResults = null;
             if (data) {
               filteredResults = filterSearch(data.recipes, this.search);
-              console.log(filteredResults);
               filteredResults = filterDifficulty(
                 filteredResults,
                 this.difficulty
@@ -89,7 +84,6 @@
               filteredResults = filterTime(filteredResults, this.totalTime);
               this.recipes = filteredResults;
             }
-            console.log(this.recipes.recipes);
           },
         };
       }
@@ -110,13 +104,8 @@
             name="search"
             placeholder="Search for Recipe Name..."
             x-model="search"
-            @change="console.log(search)"
           />
-          <select
-            name="difficulty"
-            x-model="difficulty"
-            @change="console.log(difficulty)"
-          >
+          <select name="difficulty" x-model="difficulty">
             <option>Difficulty</option>
             <option>Easy</option>
             <option>Medium</option>
@@ -132,6 +121,7 @@
       </div>
 
       <div class="results">
+        <!-- Show at max 8 -->
         <template x-for="(recipe, index) in recipes.slice(0,8)" :key="index">
           <div class="recipe-wrapper">
             <img :src="recipe.image" :alt="recipe.name" />
